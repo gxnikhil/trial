@@ -322,6 +322,75 @@
     }
 
     /* ─────────────────────────────────────────────
+       PHOTOS SECTION
+    ───────────────────────────────────────────── */
+    #photos {
+      background: var(--white);
+    }
+
+    .photos-outer {
+      width: 100%;
+      max-width: 900px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .photos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      width: 100%;
+      margin-top: 24px;
+    }
+
+    .photo-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4/3;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 12px 48px rgba(61,43,26,.20);
+      background: #f0f0f0;
+      transition: transform .3s, box-shadow .3s;
+    }
+
+    .photo-frame:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 16px 56px rgba(61,43,26,.25);
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .4s;
+    }
+
+    .photo-frame:hover img {
+      transform: scale(1.05);
+    }
+
+    .photo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, var(--beige), var(--sand));
+      color: var(--brown);
+      font-size: .9rem;
+      font-weight: 300;
+      letter-spacing: .05em;
+    }
+
+    .photo-placeholder span {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+
+    /* ─────────────────────────────────────────────
        PUZZLE SECTION
     ───────────────────────────────────────────── */
     #puzzle {
@@ -587,6 +656,7 @@
   <button class="nav-dot-item active" data-target="landing"  title="Landing"></button>
   <button class="nav-dot-item"        data-target="gallery"  title="Gallery"></button>
   <button class="nav-dot-item"        data-target="video"    title="Video"></button>
+  <button class="nav-dot-item"        data-target="photos"   title="Photos"></button>
   <button class="nav-dot-item"        data-target="puzzle"   title="Puzzle"></button>
   <button class="nav-dot-item"        data-target="questions"title="Questions"></button>
   <button class="nav-dot-item"        data-target="final"    title="Final"></button>
@@ -647,7 +717,21 @@
 </section>
 
 <!-- ═══════════════════════════════
-     4. PUZZLE
+     4. PHOTOS
+═══════════════════════════════ -->
+<section id="photos">
+  <div class="photos-outer">
+    <p class="section-label">special moments</p>
+    <h2 class="section-title">Here are a few more.</h2>
+    <p class="section-sub">Memories worth keeping.</p>
+    <div class="photos-grid" id="photos-grid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     5. PUZZLE
 ═══════════════════════════════ -->
 <section id="puzzle">
   <p class="section-label">a little challenge</p>
@@ -664,7 +748,7 @@
 </section>
 
 <!-- ═══════════════════════════════
-     5. QUESTIONS
+     6. QUESTIONS
 ═══════════════════════════════ -->
 <section id="questions">
   <p class="section-label">important questions</p>
@@ -683,7 +767,7 @@
 </section>
 
 <!-- ═══════════════════════════════
-     6. FINAL MESSAGE
+     7. FINAL MESSAGE
 ═══════════════════════════════ -->
 <section id="final">
   <div class="final-inner">
@@ -693,7 +777,7 @@
       ║  EDIT FINAL MESSAGE BELOW        ║
       ╚══════════════════════════════════╝
     -->
-    <h2>Happy Birthday,<br><em>Vaishuuuuuu❤️</em></h2>
+    <h2>Happy Birthday,<br><em>to someone wonderful.</em></h2>
     <p>You deserve every good thing this year brings — the quiet moments, the big wins, all of it.</p>
     <p>Thank you for being exactly who you are.</p>
     <p class="final-sig">— with love ✦</p>
@@ -731,6 +815,16 @@
       './images/4.jpeg',
       './images/5.jpeg',
       './images/6.jpeg',
+    ],
+
+    /* ── PHOTOS SECTION IMAGES ───────────────────────
+       Add your custom photos here for the photos section.
+       Can be the same or different from gallery images.
+       Add or remove as many as you like.
+    ─────────────────────────────────────────────── */
+    photos: [
+      './images/8.jpeg',
+      './images/9.jpeg',
     ],
 
     /* ── VIDEO FILE ──────────────────────────────
@@ -782,7 +876,7 @@
   /* ─────────────────────────────────────
      NAV DOTS
   ───────────────────────────────────── */
-  const sections  = ['landing','gallery','video','puzzle','questions','final'];
+  const sections  = ['landing','gallery','video','photos','puzzle','questions','final'];
   const navItems  = $$('.nav-dot-item');
 
   navItems.forEach(btn => {
@@ -820,6 +914,28 @@
         item.innerHTML = `<div class="gallery-placeholder"><span>✦</span>photo ${i + 1}</div>`;
       }
       grid.appendChild(item);
+    });
+  })();
+
+
+  /* ─────────────────────────────────────
+     PHOTOS
+  ───────────────────────────────────── */
+  (function buildPhotos() {
+    const grid = $('#photos-grid');
+    CONFIG.photos.forEach((src, i) => {
+      const frame = document.createElement('div');
+      frame.className = 'photo-frame';
+      if (src) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = `Photo ${i + 1}`;
+        img.loading = 'lazy';
+        frame.appendChild(img);
+      } else {
+        frame.innerHTML = `<div class="photo-placeholder"><span>✦</span>photo ${i + 1}</div>`;
+      }
+      grid.appendChild(frame);
     });
   })();
 
@@ -1100,6 +1216,7 @@
   const fadeTargets = [
     '#gallery .gallery-grid',
     '#video .video-outer',
+    '#photos .photos-outer',
     '#puzzle .puzzle-wrap',
     '#questions .question-card',
     '#final .final-inner',
