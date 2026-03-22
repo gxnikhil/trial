@@ -214,6 +214,114 @@
     .gallery-placeholder span { font-size: 2rem; }
 
     /* ─────────────────────────────────────────────
+       VIDEO SECTION
+    ───────────────────────────────────────────── */
+    #video {
+      background: linear-gradient(160deg, var(--beige) 0%, var(--cream) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #video::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(184,150,90,.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(122,92,56,.10) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .video-outer {
+      max-width: 900px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .video-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 12px 48px rgba(61,43,26,.20);
+      background: #000;
+    }
+
+    .video-frame video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .video-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(61,43,26,.8) 100%);
+      padding: 32px 20px 20px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .video-frame:hover .video-controls {
+      opacity: 1;
+    }
+
+    .video-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--caramel);
+      border: none;
+      color: var(--white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: background .2s, transform .2s;
+    }
+
+    .video-btn:hover {
+      background: var(--brown);
+      transform: scale(1.1);
+    }
+
+    .video-progress {
+      flex: 1;
+      height: 3px;
+      background: rgba(255,255,255,.3);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .video-progress::after {
+      content: '';
+      position: absolute;
+      height: 100%;
+      background: var(--caramel);
+      border-radius: 2px;
+      width: 0%;
+      transition: width .1s linear;
+    }
+
+    .video-time {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      color: var(--white);
+      min-width: 45px;
+      text-align: right;
+    }
+
+    /* ─────────────────────────────────────────────
        PUZZLE SECTION
     ───────────────────────────────────────────── */
     #puzzle {
@@ -478,6 +586,7 @@
 <nav class="nav-dots" aria-label="Page navigation">
   <button class="nav-dot-item active" data-target="landing"  title="Landing"></button>
   <button class="nav-dot-item"        data-target="gallery"  title="Gallery"></button>
+  <button class="nav-dot-item"        data-target="video"    title="Video"></button>
   <button class="nav-dot-item"        data-target="puzzle"   title="Puzzle"></button>
   <button class="nav-dot-item"        data-target="questions"title="Questions"></button>
   <button class="nav-dot-item"        data-target="final"    title="Final"></button>
@@ -518,7 +627,27 @@
 </section>
 
 <!-- ═══════════════════════════════
-     3. PUZZLE
+     3. VIDEO
+═══════════════════════════════ -->
+<section id="video">
+  <div class="video-outer">
+    <p class="section-label">a special moment</p>
+    <h2 class="section-title">Watch this.</h2>
+    <p class="section-sub">Something just for you.</p>
+    <div class="video-frame">
+      <video id="main-video" playsinline></video>
+      <div class="video-controls">
+        <button class="video-btn" id="play-btn" title="Play/Pause">▶</button>
+        <div class="video-progress" id="video-progress"></div>
+        <button class="video-btn" id="volume-btn" title="Mute/Unmute">🔊</button>
+        <div class="video-time" id="video-time">0:00</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     4. PUZZLE
 ═══════════════════════════════ -->
 <section id="puzzle">
   <p class="section-label">a little challenge</p>
@@ -535,7 +664,7 @@
 </section>
 
 <!-- ═══════════════════════════════
-     4. QUESTIONS
+     5. QUESTIONS
 ═══════════════════════════════ -->
 <section id="questions">
   <p class="section-label">important questions</p>
@@ -554,7 +683,7 @@
 </section>
 
 <!-- ═══════════════════════════════
-     5. FINAL MESSAGE
+     6. FINAL MESSAGE
 ═══════════════════════════════ -->
 <section id="final">
   <div class="final-inner">
@@ -602,8 +731,13 @@
       './images/4.jpeg',
       './images/5.jpeg',
       './images/6.jpeg',
-      
     ],
+
+    /* ── VIDEO FILE ──────────────────────────────
+       Path to your video file (mp4, webm, etc.)
+       Will be muted - no audio will play
+    ───────────────────────────────────────── */
+    videoFile: './images/video.mp4', // ← change this path
 
     /* ── PUZZLE IMAGE ────────────────────────────────
        Single image used for the sliding puzzle.
@@ -648,7 +782,7 @@
   /* ─────────────────────────────────────
      NAV DOTS
   ───────────────────────────────────── */
-  const sections  = ['landing','gallery','puzzle','questions','final'];
+  const sections  = ['landing','gallery','video','puzzle','questions','final'];
   const navItems  = $$('.nav-dot-item');
 
   navItems.forEach(btn => {
@@ -808,6 +942,82 @@
   $('#size-btn').addEventListener('click',   () => Puzzle.toggleSize());
 
 
+  /* ──────────────────────────────────────────
+     VIDEO PLAYER
+  ────────────────────────────────────────── */
+  (function initVideo() {
+    const video = $('#main-video');
+    const playBtn = $('#play-btn');
+    const volumeBtn = $('#volume-btn');
+    const progressBar = $('#video-progress');
+    const timeDisplay = $('#video-time');
+
+    if (!video || !CONFIG.videoFile) return;
+
+    video.src = CONFIG.videoFile;
+    video.volume = 0.7; // Start at 70% volume
+
+    function formatTime(seconds) {
+      if (!isFinite(seconds)) return '0:00';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function updateProgress() {
+      if (video.duration) {
+        const percent = (video.currentTime / video.duration) * 100;
+        progressBar.querySelector('.video-progress::after').style.width = percent + '%';
+        timeDisplay.textContent = formatTime(video.currentTime);
+      }
+    }
+
+    playBtn.addEventListener('click', () => {
+      if (video.paused) {
+        video.play();
+        playBtn.textContent = '⏸';
+      } else {
+        video.pause();
+        playBtn.textContent = '▶';
+      }
+    });
+
+    video.addEventListener('play', () => {
+      playBtn.textContent = '⏸';
+    });
+
+    video.addEventListener('pause', () => {
+      playBtn.textContent = '▶';
+    });
+
+    video.addEventListener('timeupdate', updateProgress);
+
+    video.addEventListener('ended', () => {
+      playBtn.textContent = '▶';
+      video.currentTime = 0;
+    });
+
+    progressBar.addEventListener('click', (e) => {
+      const rect = progressBar.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      video.currentTime = percent * video.duration;
+    });
+
+    // Volume control
+    if (volumeBtn) {
+      volumeBtn.addEventListener('click', () => {
+        if (video.muted) {
+          video.muted = false;
+          volumeBtn.textContent = '🔊';
+        } else {
+          video.muted = true;
+          volumeBtn.textContent = '🔇';
+        }
+      });
+    }
+  })();
+
+
   /* ─────────────────────────────────────
      QUESTIONS
   ───────────────────────────────────── */
@@ -889,6 +1099,7 @@
   ───────────────────────────────────── */
   const fadeTargets = [
     '#gallery .gallery-grid',
+    '#video .video-outer',
     '#puzzle .puzzle-wrap',
     '#questions .question-card',
     '#final .final-inner',
